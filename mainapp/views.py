@@ -81,3 +81,10 @@ def notes_page(request):
         except:
             return JsonResponse({'success': False})
     return render(request, 'notes.html', {'page': 'notes', 'notes': notes})
+
+@login_required(login_url='/login/')
+def account_page(request):
+    user_id = request.user.id
+    user = User.objects.get(id=user_id)
+    number_of_notes = Note.objects.filter(user=user).count()
+    return render(request, 'account.html', context={"number_of_notes": number_of_notes})

@@ -19,7 +19,7 @@
     <div class="user-info">
     
         {% if user.is_authenticated %}
-        <span class="greet-text">Hi {{ user.username }}!</span>
+        <a href="/account/" class="greet-text">{{ user.username }}'s account</a>
         <form class="logout-form" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button class="main-button" type="submit">Log Out</button>
@@ -31,8 +31,7 @@
             <a href="{% url 'reg' %}">Register</a>
         </div>
         {% endif %}
-    </div>
-    
+    </div>    
     <nav class="notebook_navigation">
         <li><a href="{% url 'add_note' %}">Add Note</a></li>
         <li><a href="{% url 'notes' %}">Notes</a></li>
