@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'scripts.js' %}"></script>
+    {% block child_js_head_files %} 
+    {% endblock %}
+</head>
+<body>
+    <header class="notebook_header">
+        <h1><a href="\">Django Notebook</a></h1>
+    </header>
+    
+    <div class="user-info">
+    
+        {% if user.is_authenticated %}
+        <span class="greet-text">Hi {{ user.username }}!</span>
+        <form class="logout-form" action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button class="main-button" type="submit">Log Out</button>
+        </form>
+        {% else %}
+        <p>You are not logged in</p>
+        <div class="access-links">
+            <a href="{% url 'login' %}">Log In</a>
+            <a href="{% url 'reg' %}">Register</a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <nav class="notebook_navigation">
+        <li><a href="{% url 'add_note' %}">Add Note</a></li>
+        <li><a href="{% url 'notes' %}">Notes</a></li>
+    </nav>
+
+    {% block content %}
+
+    {% endblock %}
+
+    <footer>
+        <p>&copy; 2024 <a href="https://github.com/AlexanderGetman">Alexander Getman</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} Notes {% endblock %}
+
+
+{% block content %}
+
+
+<div class="notes">
+    <h2>View Notes</h2>
+    {% csrf_token %}
+    {% for note in notes %}
+        <div class="note">
+            <p class="my-note">{{ note.text }}</p>
+            <td><button class="main-button" onclick="deleteEntry({{ note.id }})">Remove note</button></td>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
