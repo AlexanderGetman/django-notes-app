@@ -9,10 +9,10 @@
 <div class="notes">
     <h2>View Notes</h2>
     {% csrf_token %}
-    {% for note in notes %}
-        <div class="note">
-            <p class="my-note">{{ note.text }}</p>
-            <td><button class="main-button" onclick="deleteEntry({{ note.id }})">Remove note</button></td>
+    {% for article in articles %}
+        <div class="note">            
+            <div class="note-wrapper">{{ article.content | safe }}</div>
+            <td><button class="main-button" onclick="deleteEntry({{ article.id }})">Remove note</button></td>
         </div>
     {% endfor %}
 </div>

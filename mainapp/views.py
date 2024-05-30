@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import User, Note
+from .models import User, Note, Article
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .forms import RegForm, LoginForm
+from .forms import RegForm, LoginForm, ArticleForm
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 
@@ -58,33 +58,39 @@ def logout_page(request):
 
 @login_required(login_url='/login/')
 def add_note_page(request):
+    form = ArticleForm(request.POST)
     if request.method == "GET":
-        return render(request, 'add_note.html')
-    else:
+        return render(request, 'add_note.html', context={'article_form': form})
+    else:        
         user_id = request.user.id
         user = User.objects.get(id=user_id)
-        note = request.POST.get('note-text')
-        Note.objects.create(user=user, text=note)
+        if form.is_valid():
+            article_text = request.POST.get('content', '')
+            article = form.save(commit=False)
+            article.content = article_text
+            article.user = user
+            article.save()
+            return redirect(add_note_page)
         return(redirect(add_note_page))
 
 @login_required(login_url='/login/')
 def notes_page(request):
     user_id = request.user.id
     user = User.objects.get(id=user_id)
-    notes = Note.objects.filter(user=user)
+    articles = Article.objects.filter(user=user)
     if request.method == "POST":
-        note_id = request.POST.get('id')
+        article_id = request.POST.get('id')
         try:
-            note = Note.objects.get(id=note_id)
-            note.delete()
+            article = Article.objects.get(id=article_id)
+            article.delete()
             return JsonResponse({'success': True})
         except:
             return JsonResponse({'success': False})
-    return render(request, 'notes.html', {'page': 'notes', 'notes': notes})
+    return render(request, 'notes.html', {'page': 'notes', 'articles': articles})
 
 @login_required(login_url='/login/')
 def account_page(request):
     user_id = request.user.id
     user = User.objects.get(id=user_id)
-    number_of_notes = Note.objects.filter(user=user).count()
+    number_of_notes = Article.objects.filter(user=user).count()
     return render(request, 'account.html', context={"number_of_notes": number_of_notes})

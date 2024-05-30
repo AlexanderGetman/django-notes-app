@@ -8,12 +8,11 @@
 <div class="add-note">
     <h2>Add Note</h2>
     <form action="" method="post">
-        <label for="note-text">New Note:</label>
-        <textarea autofocus id="note-text" name="note-text" required placeholder="Write your note here"></textarea>
-
+        {{ article_form.content }}
         {% csrf_token %}
         <button class="main-button" type="submit">Submit</button>
     </form>
 </div>
 
 {% endblock %}
+{% load static %}

@@ -1,5 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from ckeditor.widgets import CKEditorWidget
+from .models import Article
 
 class RegForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Username'}))
@@ -21,3 +23,10 @@ class RegForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Password'}))
+
+class ArticleForm(forms.ModelForm):
+
+    class Meta:
+        model = Article
+        content = forms.CharField(widget = CKEditorWidget())
+        fields = ['content']
