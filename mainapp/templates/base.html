@@ -21,7 +21,7 @@
     <div class="user-info">
     
         {% if user.is_authenticated %}
-        <a href="/account/" class="greet-text">{{ user.username }}'s account</a>
+        <a href="/account/" class="greet-text">{{ user.first_name }} {{ user.last_name }}'s account</a>
         <form class="logout-form" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button class="main-button" type="submit">Log Out</button>

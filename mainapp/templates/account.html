@@ -8,10 +8,38 @@
 
 <div class="notes">
     {% if user.is_authenticated %}
-    <h2>{{ user.username }}'s account settings</h2>
+    <h2>{{ user.first_name }} {{ user.last_name }}'s account settings</h2>
     <p>Last login: {{ user.last_login }}</p>
     <p>Current number of notes: {{ number_of_notes }}</p>
-    {% csrf_token %}
+
+    <div data-name="spoiler-title">Change Password</div>
+    <div class="spoiler-body">
+        <div class="change-pw">
+            <h2>Change Password</h2>
+            <form action="" method="post">
+                <div class="passwords">
+                    <label for="old_password">Old Password:</label>
+                    {{ form.old_password }}
+                    <label for="new_password1">New Password:</label>
+                    {{ form.new_password1 }}
+                    <label for="new_password2">Confirm New Password:</label>
+                    {{ form.new_password2 }}
+                </div>
+                {{ form.new_password1.help_text }}
+                {% if form.old_password.errors %}
+                    <p>{{ form.old_password.errors.as_text }}</p>
+                {% endif %}
+                {% if form.new_password1.errors %}
+                    <p>{{ form.new_password1.errors.as_text }}</p>
+                {% endif %}
+                {% if form.new_password2.errors %}
+                    <p>{{ form.new_password2.errors.as_text }}</p>
+                {% endif %}
+                {% csrf_token %}
+                <button class="main-button" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
     {% endif %}
 </div>
 

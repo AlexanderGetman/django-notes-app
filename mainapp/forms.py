@@ -2,6 +2,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
 from .models import Article
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
 
 class RegForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Username'}))

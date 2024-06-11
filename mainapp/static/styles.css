@@ -221,3 +221,8 @@ footer a {
 .registration-form > form > p > input {
     width: 100%;
 }
+
+.passwords {
+    display: flex;
+    flex-direction: column;
+}
