@@ -12,34 +12,43 @@
     <p>Last login: {{ user.last_login }}</p>
     <p>Current number of notes: {{ number_of_notes }}</p>
 
-    <div data-name="spoiler-title">Change Password</div>
-    <div class="spoiler-body">
-        <div class="change-pw">
-            <h2>Change Password</h2>
-            <form action="" method="post">
-                <div class="passwords">
-                    <label for="old_password">Old Password:</label>
-                    {{ form.old_password }}
-                    <label for="new_password1">New Password:</label>
-                    {{ form.new_password1 }}
-                    <label for="new_password2">Confirm New Password:</label>
-                    {{ form.new_password2 }}
-                </div>
-                {{ form.new_password1.help_text }}
-                {% if form.old_password.errors %}
-                    <p>{{ form.old_password.errors.as_text }}</p>
-                {% endif %}
-                {% if form.new_password1.errors %}
-                    <p>{{ form.new_password1.errors.as_text }}</p>
-                {% endif %}
-                {% if form.new_password2.errors %}
-                    <p>{{ form.new_password2.errors.as_text }}</p>
-                {% endif %}
-                {% csrf_token %}
-                <button class="main-button" type="submit">Submit</button>
-            </form>
-        </div>
+    <div class="change-user-name">
+        <h2>Change Name</h2>
+        <form action="" method="post">
+            <div class="names">{{ change_name_form }}</div>
+            {% csrf_token %}
+            <button class="main-button" name="change_name" type="submit">Submit</button>
+        </form>
     </div>
+    
+    <hr class="rounded">
+
+    <div class="change-pw">
+        <h2>Change Password</h2>
+        <form action="" method="post">
+            <div class="passwords">
+                <label for="old_password">Old Password:</label>
+                {{ form.old_password }}
+                <label for="new_password1">New Password:</label>
+                {{ form.new_password1 }}
+                <label for="new_password2">Confirm New Password:</label>
+                {{ form.new_password2 }}
+            </div>
+            {{ form.new_password1.help_text }}
+            {% if form.old_password.errors %}
+                <p>{{ form.old_password.errors.as_text }}</p>
+            {% endif %}
+            {% if form.new_password1.errors %}
+                <p>{{ form.new_password1.errors.as_text }}</p>
+            {% endif %}
+            {% if form.new_password2.errors %}
+                <p>{{ form.new_password2.errors.as_text }}</p>
+            {% endif %}
+            {% csrf_token %}
+            <button class="main-button" name="change_password" type="submit">Submit</button>
+        </form>
+    </div>
+
     {% endif %}
 </div>
 

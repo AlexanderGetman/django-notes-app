@@ -3,7 +3,7 @@ from .models import User, Note, Article
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .forms import RegForm, LoginForm, ArticleForm
+from .forms import RegForm, LoginForm, ArticleForm, ChangeNameForm
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import PasswordChangeForm
@@ -93,13 +93,25 @@ def notes_page(request):
 def account_page(request):    
     user_id = request.user.id
     user = User.objects.get(id=user_id)
-    number_of_notes = Article.objects.filter(user=user).count()    
-    if request.method == "POST":
+    number_of_notes = Article.objects.filter(user=user).count()
+
+    if request.method == "POST" and 'change_password' in request.POST:
         form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
             return redirect('/')
+    
+    if request.method == "POST" and 'change_name' in request.POST:
+        form = PasswordChangeForm(user=request.user)
+        change_name_form = ChangeNameForm(request.POST)
+        if change_name_form.is_valid() and user.check_password(change_name_form["password"].value()):            
+            user.first_name = change_name_form["first_name"].value()
+            user.last_name = change_name_form["last_name"].value()
+            user.save()
+            return redirect('/')
+    
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'account.html', context={"number_of_notes": number_of_notes, "form":form})
+        change_name_form = ChangeNameForm()
+    return render(request, 'account.html', context={"number_of_notes": number_of_notes, "form":form, "change_name_form": change_name_form})

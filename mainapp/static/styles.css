@@ -49,6 +49,7 @@ footer {
     background-color: darkslategray;
     width: 100%;
     text-align: center;
+    margin-top: 5px;
 }
 
 footer a {    
@@ -222,7 +223,18 @@ footer a {
     width: 100%;
 }
 
-.passwords {
+.passwords, .names {
     display: flex;
     flex-direction: column;
+}
+
+.names {
+    padding-bottom: 15px;
+}
+
+hr.rounded {
+    margin-top: 15px;
+    width: 100%;
+    border-top: 8px solid #cfb0b0;
+    border-radius: 5px;
 }

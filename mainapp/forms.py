@@ -32,3 +32,8 @@ class ArticleForm(forms.ModelForm):
         model = Article
         content = forms.CharField(widget = CKEditorWidget())
         fields = ['content']
+
+class ChangeNameForm(forms.Form):
+    first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'First Name'}))
+    last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Last Name'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Password'}))
