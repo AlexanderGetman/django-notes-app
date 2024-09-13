@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import User, Note, Article
+from .models import User, Note, Article, UploadAvatar
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .forms import RegForm, LoginForm, ArticleForm, ChangeNameForm
+from .forms import RegForm, LoginForm, ArticleForm, ChangeNameForm, UploadAvatarForm
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import PasswordChangeForm
@@ -91,27 +91,39 @@ def notes_page(request):
 
 @login_required(login_url='/login/')
 def account_page(request):    
-    user_id = request.user.id
-    user = User.objects.get(id=user_id)
+    user = request.user
     number_of_notes = Article.objects.filter(user=user).count()
 
-    if request.method == "POST" and 'change_password' in request.POST:
-        form = PasswordChangeForm(user=request.user, data=request.POST)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-            return redirect('/')
-    
-    if request.method == "POST" and 'change_name' in request.POST:
-        form = PasswordChangeForm(user=request.user)
-        change_name_form = ChangeNameForm(request.POST)
-        if change_name_form.is_valid() and user.check_password(change_name_form["password"].value()):            
-            user.first_name = change_name_form["first_name"].value()
-            user.last_name = change_name_form["last_name"].value()
-            user.save()
-            return redirect('/')
-    
-    else:
-        form = PasswordChangeForm(user=request.user)
-        change_name_form = ChangeNameForm()
-    return render(request, 'account.html', context={"number_of_notes": number_of_notes, "form":form, "change_name_form": change_name_form})
+    form = PasswordChangeForm(user=user)
+    change_avatar_form = UploadAvatarForm()
+    change_name_form = ChangeNameForm()
+
+    if request.method == "POST":
+        if 'change_password' in request.POST:
+            form = PasswordChangeForm(user=user, data=request.POST)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, form.user)
+                return redirect('/')
+        elif "change_avatar" in request.POST:
+            change_avatar_form = UploadAvatarForm(request.POST, request.FILES)
+            if change_avatar_form.is_valid():
+                UploadAvatar.objects.filter(user=user).delete()
+                avatar_instance = change_avatar_form.save(commit=False)
+                avatar_instance.user = user
+                avatar_instance.save()
+                return redirect('/')
+        elif 'change_name' in request.POST:
+            change_name_form = ChangeNameForm(request.POST)
+            if change_name_form.is_valid() and user.check_password(change_name_form.cleaned_data["password"]):            
+                user.first_name = change_name_form.cleaned_data["first_name"]
+                user.last_name = change_name_form.cleaned_data["last_name"]
+                user.save()
+                return redirect('/')
+
+    return render(request, 'account.html', context={
+        "number_of_notes": number_of_notes,
+        "form": form,
+        "change_name_form": change_name_form,
+        "change_avatar_form": change_avatar_form
+    })

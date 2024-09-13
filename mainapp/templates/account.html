@@ -12,6 +12,17 @@
     <p>Last login: {{ user.last_login }}</p>
     <p>Current number of notes: {{ number_of_notes }}</p>
 
+    <div class="change-avatar">
+        <h2>Change Avatar</h2>
+        <form method="post" enctype="multipart/form-data">
+            <div class="upload-avatar-form">{{ change_avatar_form.as_p }}</div>
+            {% csrf_token %}
+            <button class="main-button" name="change_avatar" type="submit">Submit</button>
+        </form>
+    </div>
+
+    <hr class="rounded">
+
     <div class="change-user-name">
         <h2>Change Name</h2>
         <form action="" method="post">

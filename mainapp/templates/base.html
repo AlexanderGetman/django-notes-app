@@ -21,6 +21,14 @@
     <div class="user-info">
     
         {% if user.is_authenticated %}
+
+            {% if avatar_exists %}
+            <!-- <img src="/media/images/img_avatar2.png" alt="Avatar" class="avatar"> -->
+            <img src="{{ avatar.avatar.url }}" alt="Avatar" class="avatar">
+            {% else %}
+            <img src="/media/images/img_avatar.png" alt="Avatar" class="avatar">
+            {% endif %}
+        
         <a href="/account/" class="greet-text">{{ user.first_name }} {{ user.last_name }}'s account</a>
         <form class="logout-form" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
