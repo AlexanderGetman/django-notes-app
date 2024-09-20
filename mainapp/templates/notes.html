@@ -9,9 +9,13 @@
 <div class="notes">
     <h2>View Notes</h2>
     {% csrf_token %}
-    {% for article in articles %}
+    {% for article in articles reversed %}
         <div class="note">            
             <div class="note-wrapper">{{ article.content | safe }}</div>
+
+            {% for tag in article.tags.all %}
+                <a href="?tag={{ tag.name }}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
             <td><button class="main-button" onclick="deleteEntry({{ article.id }})">Remove note</button></td>
         </div>
     {% endfor %}

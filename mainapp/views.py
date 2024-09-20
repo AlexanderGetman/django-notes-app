@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import User, Note, Article, UploadAvatar
+from .models import User, Note, Article, UploadAvatar, Tag
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -7,6 +7,8 @@ from .forms import RegForm, LoginForm, ArticleForm, ChangeNameForm, UploadAvatar
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import PasswordChangeForm
+from django.conf import settings
+import os
 
 # Create your views here.
 def index_page(request):    
@@ -59,26 +61,39 @@ def logout_page(request):
 
 @login_required(login_url='/login/')
 def add_note_page(request):
-    form = ArticleForm(request.POST)
     if request.method == "GET":
+        form = ArticleForm()
         return render(request, 'add_note.html', context={'article_form': form})
-    else:        
-        user_id = request.user.id
-        user = User.objects.get(id=user_id)
+    else:
+        form = ArticleForm(request.POST)
         if form.is_valid():
-            article_text = request.POST.get('content', '')
             article = form.save(commit=False)
-            article.content = article_text
-            article.user = user
+            article.user = request.user
             article.save()
-            return redirect(add_note_page)
-        return(redirect(add_note_page))
+
+            tags = form.cleaned_data.get('tags', '')
+            if tags:
+                tag_names = [tag.strip() for tag in tags.split(',')]
+                for tag_name in tag_names:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    article.tags.add(tag)
+
+            return redirect('/')
+        return render(request, 'add_note.html', context={'article_form': form})  # Re-render the form with errors
 
 @login_required(login_url='/login/')
 def notes_page(request):
     user_id = request.user.id
     user = User.objects.get(id=user_id)
-    articles = Article.objects.filter(user=user)
+
+    if request.method == "GET":
+        try:
+            name = request.GET.get('tag', '')
+            tag = Tag.objects.get(name=name)
+            articles = Article.objects.filter(tags=tag)
+        except:
+            articles = Article.objects.filter(user=user)
+    
     if request.method == "POST":
         article_id = request.POST.get('id')
         try:

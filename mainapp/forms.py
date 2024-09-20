@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from ckeditor.widgets import CKEditorWidget
-from .models import Article, UploadAvatar
+from .models import Article, UploadAvatar, Tag
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
+import os
 
 class RegForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'Username'}))
@@ -27,11 +28,12 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder':'Password'}))
 
 class ArticleForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorWidget(), label='Content')
+    tags = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Input tags separated by comma'}), label='Tags')
 
     class Meta:
         model = Article
-        content = forms.CharField(widget = CKEditorWidget())
-        fields = ['content']
+        fields = ['content', 'tags']
 
 class ChangeNameForm(forms.Form):
     first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'First Name'}))

@@ -15,7 +15,7 @@ def avatar_display_processor(request):
         try:
             avatar = UploadAvatar.objects.get(user=request.user)
         except UploadAvatar.DoesNotExist:
-            avatar = None
+            avatar = None    
     return {
         'avatar': avatar
     }
